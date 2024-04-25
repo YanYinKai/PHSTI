@@ -9,12 +9,20 @@ from sklearn.metrics import f1_score
 from sklearn.metrics import accuracy_score
 from  tqdm import tqdm
 import  warnings
-import disM
 from persim.persistent_entropy import *
 from sklearn.ensemble import RandomForestClassifier
 warnings.simplefilter("ignore")
 thresh=100
+def VSPK(dgm):
+    weights = dgm[:, 1] - dgm[:, 0]
 
+    # 将权重与出生时间相乘
+    weighted_births = weights * dgm[:, 0]
+
+    # 计算加权均值
+    weighted_mean = np.sum(weighted_births) / np.sum(weights)
+
+    return weighted_mean
 import xlrd
 from xlutils.copy import copy
 excel_path = 'F:\\Desktop\\CLAS\\class2.xlsx'  # 分类结果保存位置
@@ -165,12 +173,12 @@ for xy in [9]:#1,3,4,6,7,9,12,14,17,18,51,54,55,56,61,64,66,68,38,39,40,47,22,23
                 H_dgmr3 = np.array(list(filter(lambda x: x[1] != np.inf, H_dgm)))
                 if len(H_dgmr3) == 0:
                     H_dgmr3 = np.array([[0, 0]])
-                AA=np.append(disM.VSPK(H_dgmr1),disM.VSPK(H_dgmr2))
-                AA=np.append(AA,disM.VSPK(H_dgmr3))
+                AA=np.append(VSPK(H_dgmr1),disM.VSPK(H_dgmr2))
+                AA=np.append(AA,VSPK(H_dgmr3))
                 Z = np.append(Z,AA)
-                Z1 = np.append(Z1, disM.VSPK(H_dgmr3))
-                Z2 = np.append(Z2, disM.VSPK(H_dgmr1))
-                Z3 = np.append(Z3, disM.VSPK(H_dgmr2))
+                Z1 = np.append(Z1,VSPK(H_dgmr3))
+                Z2 = np.append(Z2, VSPK(H_dgmr1))
+                Z3 = np.append(Z3,VSPK(H_dgmr2))
                 del dgms, H0_dgm, H1_dgm, H_dgmr1, H_dgmr2, H_dgmr3,AA
             Ztr = np.append(Ztr,[Z],axis=0)
             Ztr1 = np.append(Ztr1, [Z1], axis=0)
@@ -207,12 +215,12 @@ for xy in [9]:#1,3,4,6,7,9,12,14,17,18,51,54,55,56,61,64,66,68,38,39,40,47,22,23
                 H_dgme3 = np.array(list(filter(lambda x: x[1] != np.inf, H_dgm)))
                 if len(H_dgme3) == 0:
                     H_dgme3 = np.array([[0, 0]])
-                AA = np.append(disM.VSPK(H_dgme1), disM.VSPK(H_dgme2))
-                AA = np.append(AA, disM.VSPK(H_dgme3))
+                AA = np.append(VSPK(H_dgme1), disM.VSPK(H_dgme2))
+                AA = np.append(AA, VSPK(H_dgme3))
                 Z = np.append(Z,AA)
-                Z1 = np.append(Z1, disM.VSPK(H_dgme3))
-                Z2 = np.append(Z2, disM.VSPK(H_dgme1))
-                Z3 = np.append(Z3, disM.VSPK(H_dgme2))
+                Z1 = np.append(Z1, VSPK(H_dgme3))
+                Z2 = np.append(Z2, VSPK(H_dgme1))
+                Z3 = np.append(Z3, VSPK(H_dgme2))
                 del dgms, H0_dgm, H1_dgm, H_dgme1, H_dgme2, H_dgme3, AA
             Zte = np.append(Zte,[Z],axis=0)
             Zte1 = np.append(Zte1, [Z1], axis=0)
